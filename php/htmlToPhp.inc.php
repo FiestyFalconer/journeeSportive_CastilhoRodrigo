@@ -63,3 +63,14 @@ function getClasses(){
     $query->execute();
     return $query->fetchAll(PDO::FETCH_ASSOC);
 }
+
+//ajouter une classe dans la base de donnees
+function insertClasse($nomClasse){
+    $pdo = getConnexion();
+    $query = $pdo->prepare("
+        INSERT INTO `journeesportive`.`classe`
+                    (`nomClasse`)
+        Values            (?)
+    ");
+    $query->execute([$nomClasse]);
+}
