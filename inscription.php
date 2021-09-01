@@ -5,6 +5,7 @@ $submit = filter_input(INPUT_POST,'submit',FILTER_SANITIZE_STRING);
 $message = "";
 
 if($submit == "submit"){
+    //variables pour stocker les donnees
     $nom = filter_input(INPUT_POST,'nomEleve',FILTER_SANITIZE_STRING);
     $prenom = filter_input(INPUT_POST,'prenomEleve',FILTER_SANITIZE_STRING);
     $classe = filter_input(INPUT_POST,'classe',FILTER_SANITIZE_STRING);
@@ -12,8 +13,6 @@ if($submit == "submit"){
     $choix1 = filter_input(INPUT_POST,'choix1',FILTER_SANITIZE_STRING);
     $choix2 = filter_input(INPUT_POST,'choix2',FILTER_SANITIZE_STRING);
     $choix3 = filter_input(INPUT_POST,'choix3',FILTER_SANITIZE_STRING);
-    /*******/
-    var_dump($nom);
     
     if($nom == "" || $prenom == ""){
         $message = "le nom et le prenom sont obligatoires";
@@ -23,15 +22,21 @@ if($submit == "submit"){
             $message = "erreur";
         }
         else{
-
+            $_SESSION['Nom']=$nom;
+            $_SESSION['Prenom']=$prenom;
+            $_SESSION['Classe']=$classe;
+            $_SESSION['Choix1']=$choix1;
+            $_SESSION['Choix2']=$choix2;
+            $_SESSION['Choix3']=$choix3;
         }
     }
     
 }
 else if($submit == "annuler"){
-
+    $_SESSION = [];
 }
 
+var_dump($_SESSION);
 ?>
 <!DOCTYPE html>
 <html lang="en">
