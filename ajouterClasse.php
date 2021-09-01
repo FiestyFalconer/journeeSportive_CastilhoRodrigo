@@ -3,7 +3,7 @@ require_once './php/htmlToPhp.inc.php';
 
 $submit = filter_input(INPUT_POST,'submit',FILTER_SANITIZE_STRING);
 $message = "";
-$boolClasse = false;
+$boolClasse = true;
 
 if($submit == "submit"){
     $nomClasse = filter_input(INPUT_POST,'nouvelleClasse',FILTER_SANITIZE_STRING);
@@ -13,23 +13,21 @@ if($submit == "submit"){
         //voir si on a deja la meme classe dans la base de donnees
         foreach($tableau as $classe){
             if($classe['nomClasse'] == $nomClasse){
-                $boolClasse = true;
+                $boolClasse = false;
             }
+        }
+
+        if($boolClasse){
+            $message = "IL existe deja cette classe";
+        }else{
+            $message = "la classe a bien etais ajoutée";
+            insertClasse($nomClasse);
         }
     }
     else{
         $message = "ERREUR";
     }
-
-    if($boolClasse){
-        $message = "IL existe deja cette classe";
-    }else{
-        $message = "la classe a bien etais ajoutée";
-        insertClasse($nomClasse);
-    }
-
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">

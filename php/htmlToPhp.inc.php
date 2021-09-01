@@ -74,3 +74,14 @@ function insertClasse($nomClasse){
     ");
     $query->execute([$nomClasse]);
 }
+
+//ajouter une activite a la base de donnees
+function insertActivite($nomActivite){
+    $pdo = getConnexion();
+    $query = $pdo->prepare("
+        INSERT INTO `journeesportive`.`activite`
+                    (`nomActivite`)
+        Values          (?)
+    ");
+    $query->execute([$nomActivite]);
+}
