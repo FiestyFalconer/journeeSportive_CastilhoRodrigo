@@ -12,26 +12,54 @@ if(!isset($_SESSION['Nom'])){
         'Choix2' => '',
         'Choix3' => ''  
     ];
-  }
-
+}
 
 //afficher les differents "selects"
 function afficherSelectActivites($name){
 
-    $select = "
-            <select name='$name'>
-                <option value='accrobranche'>Accrobranche</option>
-                <option value='velo'>Vélo</option>
-                <option value='football'>Football</option>
-            </select>
-    ";
+    $select = "<select name='$name'>";
+
+    $tableau = getActivites();
+
+    foreach ($tableau as $activites){
+        $select .= "<option value=$activites[nomActivite]>$activites[nomActivite]</option>";
+    }
+
+    $select .= "</select>";
 
     return $select;
 }
 
-function getActivites(){
-    $query =  getConnexion()->prepare("
-    SELECT ``
-    ");
+function afficherSelectClasses(){
+    $select = "<select name='classe'>";
+
+    $tableau = getClasses();
+
+    foreach($tableau as $classes){
+        $select .= "<option value=$classes[nomClasse]>$classes[nomClasse]</option>";
+    }
+    
+    $select .= "</select>";
+    
+    return $select;
 }
 
+// avoir les differentes classes
+function getActivites(){
+    $query =  getConnexion()->prepare("
+        SELECT `activite`.`nomActivite`
+        FROM `journeesportive`.`activite`
+    ");
+    $query->execute();
+    return $query->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// avoir les classes
+function getClasses(){
+    $query = getConnexion()->prepare("
+        SELECT `classe`.`nomClasse`
+        FROM `journeesportive`.`classe`
+    ");
+    $query->execute();
+    return $query->fetchAll(PDO::FETCH_ASSOC);
+}

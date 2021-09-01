@@ -35,7 +35,7 @@ if($submit == "submit"){
 else if($submit == "annuler"){
     $_SESSION = [];
 }
-
+//var_dump(getActivites());
 var_dump($_SESSION);
 ?>
 <!DOCTYPE html>
@@ -64,11 +64,7 @@ var_dump($_SESSION);
 
         <div>
             <label>Classe :</label>
-            <select name="classe">
-                <option value="ifa-p2a">IFA-P2A</option>
-                <option value="ifa-p2b">IFA-P2B</option>
-                <option value="ifa-p2c">IFA-P2C</option>
-            </select>
+            <?=afficherSelectClasses()?>
         </div>
 
         <div>
@@ -95,6 +91,11 @@ var_dump($_SESSION);
 
     </form>
     <p style="color: red;"><?=$message?></p>
+    <div>
+        <a href="./ajouterClasse.php">Ajouter une classe</a>
+        <br>
+        <a href="./ajouterActivite.php">Ajouter une activité</a>
+    </div>
 </body>
 
 </html>
