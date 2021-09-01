@@ -4,7 +4,7 @@
  */
 require_once "config.php";
 
-function db(){
+function  getConnexion(){
     static $myDb = null;
     if($myDb === null){
         $myDb = new PDO(

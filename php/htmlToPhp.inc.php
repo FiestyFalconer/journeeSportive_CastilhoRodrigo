@@ -1,4 +1,5 @@
 <?php
+require_once "database.php";
 
 session_start();
 //creer la session
@@ -27,3 +28,10 @@ function afficherSelectActivites($name){
 
     return $select;
 }
+
+function getActivites(){
+    $query =  getConnexion()->prepare("
+    SELECT ``
+    ");
+}
+
