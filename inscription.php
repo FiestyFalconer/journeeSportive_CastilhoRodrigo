@@ -95,6 +95,8 @@ var_dump($_SESSION);
         <a href="./ajouterClasse.php">Ajouter une classe</a>
         <br>
         <a href="./ajouterActivite.php">Ajouter une activité</a>
+        <br>
+        <a href="./index.php">Retour</a>
     </div>
 </body>
 

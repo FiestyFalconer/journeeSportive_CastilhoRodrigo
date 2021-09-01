@@ -8,9 +8,9 @@ if(!isset($_SESSION['Nom'])){
         'Nom' => '',
         'Prenom' => '',
         'Classe' => '',
-        'Choix1' => '',
-        'Choix2' => '',
-        'Choix3' => ''  
+        'choix1' => '',
+        'choix2' => '',
+        'choix3' => ''  
     ];
 }
 
@@ -22,7 +22,7 @@ function afficherSelectActivites($name){
     $tableau = getActivites();
 
     foreach ($tableau as $activites){
-        $select .= "<option value=$activites[nomActivite]>$activites[nomActivite]</option>";
+        $select .= "<option value=$activites[idActivite]>$activites[nomActivite]</option>";
     }
 
     $select .= "</select>";
@@ -36,7 +36,7 @@ function afficherSelectClasses(){
     $tableau = getClasses();
 
     foreach($tableau as $classes){
-        $select .= "<option value=$classes[nomClasse]>$classes[nomClasse]</option>";
+        $select .= "<option value=$classes[idClasse]>$classes[nomClasse]</option>";
     }
     
     $select .= "</select>";
@@ -47,7 +47,7 @@ function afficherSelectClasses(){
 // avoir les differentes classes
 function getActivites(){
     $query =  getConnexion()->prepare("
-        SELECT `activite`.`nomActivite`
+        SELECT `activite`.`idActivite`,`activite`.`nomActivite`
         FROM `journeesportive`.`activite`
     ");
     $query->execute();
@@ -57,11 +57,23 @@ function getActivites(){
 // avoir les classes
 function getClasses(){
     $query = getConnexion()->prepare("
-        SELECT `classe`.`nomClasse`
+        SELECT `classe`.`idClasse`,`classe`.`nomClasse`
         FROM `journeesportive`.`classe`
     ");
     $query->execute();
     return $query->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getEleves(){
+    $query = getConnexion()->prepare("
+    SELECT `eleve`.`idEleve`, `eleve`.`nom`, `eleve`.`prenom`, `classe`.`nomClasse`, `activite`.`nomActivite`, `incription`.`ordrePref`
+    from `journeesportive`.`eleve`, `journeesportive`.`classe`, `journeesportive`.`activite`, `journeesportive`.`incription`
+    where `eleve`.`idClasse` = `classe`.`idClasse`
+    and `eleve`.`idEleve`= `incription`.`idEleve`
+    and `activite`.`idActivite` = `incription`.`idActivite`
+    ");
+    $query->execute();
+    return $query->fetchAll();
 }
 
 //ajouter une classe dans la base de donnees
@@ -84,4 +96,33 @@ function insertActivite($nomActivite){
         Values          (?)
     ");
     $query->execute([$nomActivite]);
+}
+
+function insertEleve($nomEleve, $prenomEleve, $idClasse, $idActivite, $choix1, $choix2, $choix3){
+    $pdo = getConnexion();
+    $query = $pdo->prepare("
+        INSERT INTO  `journeesportive`.`eleve`
+                    (`nom`,`prenom`,`idClasse`)
+        Values      (?,?,?)
+    ");
+    $query->execute([$nomEleve,$prenomEleve,$idClasse]);
+
+    for($i = 0; $i<3; $i++){
+        $query = $pdo->prepare("
+        INSERT INTO `journeesportive`.`incription`
+                    (`idEleve`,`idActivite`,`ordrePref`)
+                    (lastInsertId,?,?)
+        ");
+        if($i == 0){
+            $query->execute([$idActivite,$choix1]);
+        }
+        else if($i == 1){
+            $query->execute([$idActivite,$choix2]);
+        }
+        else{
+            $query->execute([$idActivite,$choix3]);
+        }
+
+    }
+   
 }
