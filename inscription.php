@@ -1,3 +1,19 @@
+<?php
+$submit = filter_input(INPUT_POST,'submit',FILTER_SANITIZE_STRING);
+$message = "";
+
+if($submit == "submit"){
+    $nom = filter_input(INPUT_POST,'nomEleve',FILTER_SANITIZE_STRING);
+    $prenom = filter_input(INPUT_POST,'prenomEleve',FILTER_SANITIZE_STRING);
+    $classe = filter_input(INPUT_POST,'classe',FILTER_SANITIZE_STRING);
+
+    
+}
+else if($submit == "annuler"){
+
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,6 +40,11 @@
 
         <div>
             <label>Classe :</label>
+            <select name="classe">
+                <option value="ifa-p2a">IFA-P2A</option>
+                <option value="ifa-p2b">IFA-P2B</option>
+                <option value="ifa-p2c">IFA-P2C</option>
+            </select>
         </div>
 
         <div>
