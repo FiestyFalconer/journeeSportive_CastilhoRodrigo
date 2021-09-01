@@ -1,4 +1,6 @@
 <?php
+require_once './php/htmlToPhp.inc.php';
+
 $submit = filter_input(INPUT_POST,'submit',FILTER_SANITIZE_STRING);
 $message = "";
 
@@ -7,6 +9,23 @@ if($submit == "submit"){
     $prenom = filter_input(INPUT_POST,'prenomEleve',FILTER_SANITIZE_STRING);
     $classe = filter_input(INPUT_POST,'classe',FILTER_SANITIZE_STRING);
 
+    $choix1 = filter_input(INPUT_POST,'choix1',FILTER_SANITIZE_STRING);
+    $choix2 = filter_input(INPUT_POST,'choix2',FILTER_SANITIZE_STRING);
+    $choix3 = filter_input(INPUT_POST,'choix3',FILTER_SANITIZE_STRING);
+    /*******/
+    var_dump($nom);
+    
+    if($nom == "" || $prenom == ""){
+        $message = "le nom et le prenom sont obligatoires";
+    }
+    else{
+        if($choix1 == $choix2 || $choix1 == $choix3 || $choix2 == $choix3){
+            $message = "erreur";
+        }
+        else{
+
+        }
+    }
     
 }
 else if($submit == "annuler"){
@@ -53,35 +72,24 @@ else if($submit == "annuler"){
 
         <div>
             <label>Premier choix:</label>
-            <select name="premierChoix">
-                <option value="accrobranche">Accrobranche</option>
-                <option value="velo">Vélo</option>
-                <option value="football">Football</option>
-            </select>
+            <?=afficherSelectActivites('choix1')?>
         </div>
 
         <div>
             <label>Deuxième choix:</label>
-            <select name="deuxiemeChoix">
-                <option value="accrobranche">Accrobranche</option>
-                <option value="velo">Vélo</option>
-                <option value="football">Football</option>
-            </select>
+            <?=afficherSelectActivites('choix2')?>
         </div>
 
         <div>
             <label>Troisième choix:</label>
-            <select name="troisiemeChoix">
-                <option value="accrobranche">Accrobranche</option>
-                <option value="velo">Vélo</option>
-                <option value="football">Football</option>
-            </select>
+            <?=afficherSelectActivites('choix3')?>
         </div>
 
-        <button type="submit" name="submit">Confirmer</button>
-        <button type="submit" name="annuler">Annuler</button>
+        <button type="submit" name="submit" value="submit">Confirmer</button>
+        <button type="submit" name="submit" value="annuler">Annuler</button>
 
     </form>
+    <p style="color: red;"><?=$message?></p>
 </body>
 
 </html>
