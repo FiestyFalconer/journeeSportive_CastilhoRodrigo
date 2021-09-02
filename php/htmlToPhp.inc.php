@@ -10,11 +10,11 @@ if(!isset($_SESSION['Nom'])){
         'Classe' => '',
         'Choix1' => '',
         'Choix2' => '',
-        'Choix3' => ''  
+        'Choix3' => '', 
     ];
 }
 
-//afficher les differents "selects"
+//afficher les differents "selects" pour les activites
 function afficherSelectActivites($name){
 
     $select = "<select name='$name'>";
@@ -29,7 +29,7 @@ function afficherSelectActivites($name){
 
     return $select;
 }
-
+//afficher toutes les classes
 function afficherSelectClasses(){
     $select = "<select name='classe'>";
 
@@ -53,6 +53,44 @@ function getActivites(){
     $query->execute();
     return $query->fetchAll(PDO::FETCH_ASSOC);
 }
+//avoir une seule activite
+function getUneActivite($id){
+    $query =  getConnexion()->prepare("
+        SELECT `activite`.`idActivite`,`activite`.`nomActivite`
+        FROM `journeesportive`.`activite`
+        WHERE `activite`.`idActivite` = ?
+    ");
+    $query->execute([$id]);
+    return $query->fetch(PDO::FETCH_ASSOC);
+}
+//avoir une classe
+function getUneClasse($id){
+    $query =  getConnexion()->prepare("
+        SELECT `idClasse`, `nomClasse` 
+        FROM `classe` 
+        WHERE `idClasse` = ?
+    ");
+    $query->execute([$id]);
+    return $query->fetch(PDO::FETCH_ASSOC);
+}
+//modifier une classe
+function modifierClasse($nomClasse,$id){
+    $query = getConnexion()->prepare("
+        UPDATE `journeesportive`.`classe` 
+        SET `classe`.`nomClasse`= ?
+        WHERE `classe`.`idClasse` = ?
+    ");
+    $query->execute([$nomClasse,$id]);
+}
+//modifier une activite
+function modifierActivite($nomActivite,$id){
+    $query = getConnexion()->prepare("
+        UPDATE `journeesportive`.`activite` 
+        SET `activite`.`nomActivite`= ?
+        WHERE `activite`.`idActivite` = ?
+    ");
+    $query->execute([$nomActivite,$id]);
+}
 
 // avoir les classes
 function getClasses(){
@@ -64,50 +102,48 @@ function getClasses(){
     return $query->fetchAll(PDO::FETCH_ASSOC);
 }
 
-//avoir les donnees de chatout le tableau
-function getEleves(){
-    $query = getConnexion()->prepare("
-    SELECT `eleve`.`idEleve`, `eleve`.`nom`, `eleve`.`prenom`, `classe`.`nomClasse`, `activite`.`nomActivite`, `incription`.`ordrePref`
-    from `journeesportive`.`eleve`, `journeesportive`.`classe`, `journeesportive`.`activite`, `journeesportive`.`incription`
-    where  `incription`.`idEleve`= `eleve`.`idEleve`
-    and `activite`.`idActivite` = `incription`.`idActivite`
-    and `eleve`.`idClasse` = `classe`.`idClasse`
-    order by `eleve`.`idEleve`
-    ");
-    $query->execute();
-    return $query->fetchAll();
-}
-
-function showEleves($eleves){
+function showAll($classes,$activites){
     
     $tableau = "<table>
         <thead>
         <tr>
             <th>id</th>
-            <th>Nom</th>
-            <th>Prenom</th>
             <th>Classe</th>
-            <th>Activite</th>
-            <th>Ordre de préférences</th>
         </tr>
         </thead>
         <tbody>
     ";
 
-    foreach($eleves as $unEleve){
+    foreach($classes as $uneClasse){
         $tableau.="
             <tr>
-                <td>$unEleve[idEleve]</td>
-                <td>$unEleve[nom]</td>
-                <td>$unEleve[prenom]</td>
-                <td>$unEleve[nomClasse]</td>
-                <td>$unEleve[nomActivite]</td>
-                <td>$unEleve[ordrePref]</td>
-                <td><a href='./editer.php?id=$unEleve[idEleve]'>Editer</a></td>
+                <td>$uneClasse[idClasse]</td>
+                <td>$uneClasse[nomClasse]</td>
+                <td><a href='./editer.php?id=$uneClasse[idClasse]&act=false'>Editer</a></td>
+                <td><a href='./editer.php?id=$uneClasse[idClasse]&act=false'>Effacer</a></td>
             </tr>
         ";
     }
+    $tableau .= "<table>
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>Activite</th>
+    </tr>
+    </thead>
+    <tbody>
+    ";
 
+    foreach($activites as $uneActivite){
+    $tableau.="
+        <tr>
+            <td>$uneActivite[idActivite]</td>
+            <td>$uneActivite[nomActivite]</td>
+            <td><a href='./editer.php?id=$uneActivite[idActivite]&act=true'>Editer</a></td>
+            <td><a href='./editer.php?id=$uneActivite[idActivite]&act=true'>Effacer</a></td>
+        </tr>
+    ";
+}
     $tableau.="</tbody></table>";
 
     return $tableau;

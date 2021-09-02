@@ -13,7 +13,7 @@ require_once "./php/htmlToPhp.inc.php";
 <body>
     <h1>Journee Sportive CFPT</h1>
 
-    <?= showEleves(getEleves())?>
+    <?= showAll(getClasses(),getActivites())?>
 
 
     <a href="./inscription.php">Inscription</a>
