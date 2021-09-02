@@ -58,7 +58,7 @@ function getActivites(){
     try{
         $query =  getConnexion()->prepare("
             SELECT `activite`.`idActivite`,`activite`.`nomActivite`
-            FROM `journeesportivee`.`activite`
+            FROM `journeesportive`.`activite`
         ");
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
