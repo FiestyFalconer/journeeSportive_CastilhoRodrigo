@@ -16,9 +16,8 @@ function  getConnexion(){
             $myDb->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
         }
         catch(PDOException $e){
-            return null;
+            //return null;
         }
-        
     }
     return $myDb;
 }
