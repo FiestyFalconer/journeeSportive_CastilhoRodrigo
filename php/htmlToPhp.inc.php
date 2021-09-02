@@ -46,73 +46,100 @@ function afficherSelectClasses(){
 
 // avoir les differentes classes
 function getActivites(){
-    $query =  getConnexion()->prepare("
-        SELECT `activite`.`idActivite`,`activite`.`nomActivite`
-        FROM `journeesportive`.`activite`
-    ");
-    $query->execute();
-    return $query->fetchAll(PDO::FETCH_ASSOC);
+    try{
+        $query =  getConnexion()->prepare("
+            SELECT `activite`.`idActivite`,`activite`.`nomActivite`
+            FROM `journeesportive`.`activite`
+        ");
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+    catch(PDOException $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    }
 }
 //avoir une seule activite
 function getUneActivite($id){
-    $query =  getConnexion()->prepare("
-        SELECT `activite`.`idActivite`,`activite`.`nomActivite`
-        FROM `journeesportive`.`activite`
-        WHERE `activite`.`idActivite` = ?
-    ");
-    $query->execute([$id]);
-    return $query->fetch(PDO::FETCH_ASSOC);
+    try{
+        $query =  getConnexion()->prepare("
+            SELECT `activite`.`idActivite`,`activite`.`nomActivite`
+            FROM `journeesportive`.`activite`
+            WHERE `activite`.`idActivite` = ?
+        ");
+        $query->execute([$id]);
+        return $query->fetch(PDO::FETCH_ASSOC);
+    }
+    catch(PDOException $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    }
 }
 //avoir une classe
 function getUneClasse($id){
-    $query =  getConnexion()->prepare("
-        SELECT `idClasse`, `nomClasse` 
-        FROM `classe` 
-        WHERE `idClasse` = ?
-    ");
+    try{
+        $query =  getConnexion()->prepare("
+            SELECT `idClasse`, `nomClasse` 
+            FROM `classe` 
+            WHERE `idClasse` = ?
+        ");
     $query->execute([$id]);
     return $query->fetch(PDO::FETCH_ASSOC);
+    }catch(PDOException $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    }
 }
 //modifier une classe
 function modifierClasse($nomClasse,$id){
-    $query = getConnexion()->prepare("
-        UPDATE `journeesportive`.`classe` 
-        SET `classe`.`nomClasse`= ?
-        WHERE `classe`.`idClasse` = ?
-    ");
-    $query->execute([$nomClasse,$id]);
+    try{
+        $query = getConnexion()->prepare("
+            UPDATE `journeesportive`.`classe` 
+            SET `classe`.`nomClasse`= ?
+            WHERE `classe`.`idClasse` = ?
+        ");
+        $query->execute([$nomClasse,$id]);
+    }catch(PDOException $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    }
+    
 }
 //modifier une activite
 function modifierActivite($nomActivite,$id){
-    $query = getConnexion()->prepare("
-        UPDATE `journeesportive`.`activite` 
-        SET `activite`.`nomActivite`= ?
-        WHERE `activite`.`idActivite` = ?
-    ");
-    $query->execute([$nomActivite,$id]);
+    try{
+        $query = getConnexion()->prepare("
+            UPDATE `journeesportive`.`activite` 
+            SET `activite`.`nomActivite`= ?
+            WHERE `activite`.`idActivite` = ?
+        ");
+        $query->execute([$nomActivite,$id]);
+    }
+    catch(PDOException $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    }
 }
 //effacer la classe choisi
 function deleteClasse($id){
-    
-    $pdo = getConnexion();
-    $query = $pdo->prepare("
-        DELETE FROM `incription` 
-        WHERE (SELECT `eleve`.`idClasse` FROM `eleve` WHERE `idClasse` = ?);
-    ");
-    $query->execute([$id]); 
-    
-    $query = $pdo->prepare("
-        DELETE FROM `eleve`
-        WHERE `eleve`.`idClasse` = ?
-    ");
-    $query->execute([$id]); 
-    
-    $query = $pdo->prepare("
-        DELETE FROM `classe`
-        WHERE `classe`.`idClasse` = ?
-    ");
-    $query->execute([$id]);    
+    try{
+        $pdo = getConnexion();
+        $query = $pdo->prepare("
+            DELETE FROM `incription` 
+            WHERE (SELECT `eleve`.`idClasse` FROM `eleve` WHERE `idClasse` = ?);
+        ");
+        $query->execute([$id]); 
         
+        $query = $pdo->prepare("
+            DELETE FROM `eleve`
+            WHERE `eleve`.`idClasse` = ?
+        ");
+        $query->execute([$id]); 
+        
+        $query = $pdo->prepare("
+            DELETE FROM `classe`
+            WHERE `classe`.`idClasse` = ?
+        ");
+        $query->execute([$id]);    
+    }
+    catch(PDOException $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    } 
 }
 //effacer la activite choisi
 function deleteActivite($id){
