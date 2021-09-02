@@ -1,7 +1,3 @@
-<?php
-require_once "./php/htmlToPhp.inc.php";
-
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,11 +7,6 @@ require_once "./php/htmlToPhp.inc.php";
     <title>Document</title>
 </head>
 <body>
-    <h1>Journee Sportive CFPT</h1>
-
-    <?= showEleves(getEleves())?>
-
-
-    <a href="./inscription.php">Inscription</a>
+    <h1>Editer</h1>
 </body>
 </html>

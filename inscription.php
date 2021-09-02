@@ -28,6 +28,8 @@ if($submit == "submit"){
             $_SESSION['Choix1']=$choix1;
             $_SESSION['Choix2']=$choix2;
             $_SESSION['Choix3']=$choix3;
+            
+            insertEleve($_SESSION['Nom'], $_SESSION['Prenom'], $_SESSION['Classe'], $choix1, $choix2, $choix3);
         }
     }
     

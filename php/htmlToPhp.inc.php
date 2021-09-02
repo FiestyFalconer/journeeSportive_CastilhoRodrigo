@@ -8,9 +8,9 @@ if(!isset($_SESSION['Nom'])){
         'Nom' => '',
         'Prenom' => '',
         'Classe' => '',
-        'choix1' => '',
-        'choix2' => '',
-        'choix3' => ''  
+        'Choix1' => '',
+        'Choix2' => '',
+        'Choix3' => ''  
     ];
 }
 
@@ -64,16 +64,54 @@ function getClasses(){
     return $query->fetchAll(PDO::FETCH_ASSOC);
 }
 
+//avoir les donnees de chatout le tableau
 function getEleves(){
     $query = getConnexion()->prepare("
     SELECT `eleve`.`idEleve`, `eleve`.`nom`, `eleve`.`prenom`, `classe`.`nomClasse`, `activite`.`nomActivite`, `incription`.`ordrePref`
     from `journeesportive`.`eleve`, `journeesportive`.`classe`, `journeesportive`.`activite`, `journeesportive`.`incription`
-    where `eleve`.`idClasse` = `classe`.`idClasse`
-    and `eleve`.`idEleve`= `incription`.`idEleve`
+    where  `incription`.`idEleve`= `eleve`.`idEleve`
     and `activite`.`idActivite` = `incription`.`idActivite`
+    and `eleve`.`idClasse` = `classe`.`idClasse`
+    order by `eleve`.`idEleve`
     ");
     $query->execute();
     return $query->fetchAll();
+}
+
+function showEleves($eleves){
+    
+    $tableau = "<table>
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>Nom</th>
+            <th>Prenom</th>
+            <th>Classe</th>
+            <th>Activite</th>
+            <th>Ordre de préférences</th>
+        </tr>
+        </thead>
+        <tbody>
+    ";
+
+    foreach($eleves as $unEleve){
+        $tableau.="
+            <tr>
+                <td>$unEleve[idEleve]</td>
+                <td>$unEleve[nom]</td>
+                <td>$unEleve[prenom]</td>
+                <td>$unEleve[nomClasse]</td>
+                <td>$unEleve[nomActivite]</td>
+                <td>$unEleve[ordrePref]</td>
+                <td><a href='./editer.php?id=$unEleve[idEleve]'>Editer</a></td>
+            </tr>
+        ";
+    }
+
+    $tableau.="</tbody></table>";
+
+    return $tableau;
+
 }
 
 //ajouter une classe dans la base de donnees
@@ -98,7 +136,7 @@ function insertActivite($nomActivite){
     $query->execute([$nomActivite]);
 }
 
-function insertEleve($nomEleve, $prenomEleve, $idClasse, $idActivite, $choix1, $choix2, $choix3){
+function insertEleve($nomEleve, $prenomEleve, $idClasse, $choix1, $choix2, $choix3){
     $pdo = getConnexion();
     $query = $pdo->prepare("
         INSERT INTO  `journeesportive`.`eleve`
@@ -107,20 +145,23 @@ function insertEleve($nomEleve, $prenomEleve, $idClasse, $idActivite, $choix1, $
     ");
     $query->execute([$nomEleve,$prenomEleve,$idClasse]);
 
-    for($i = 0; $i<3; $i++){
-        $query = $pdo->prepare("
+    $last_id = $pdo->lastInsertId();
+    
+    $query = $pdo->prepare("
         INSERT INTO `journeesportive`.`incription`
                     (`idEleve`,`idActivite`,`ordrePref`)
-                    (lastInsertId,?,?)
-        ");
+        Values            (?,?,?)
+    ");
+    for($i = 0; $i<3; $i++){
+        
         if($i == 0){
-            $query->execute([$idActivite,$choix1]);
+            $query->execute([$last_id, $choix1,1]);
         }
         else if($i == 1){
-            $query->execute([$idActivite,$choix2]);
+            $query->execute([$last_id, $choix2,2]);
         }
         else{
-            $query->execute([$idActivite,$choix3]);
+            $query->execute([$last_id, $choix3,3]);
         }
 
     }
