@@ -16,32 +16,41 @@ if(!isset($_SESSION['Nom'])){
 
 //afficher les differents "selects" pour les activites
 function afficherSelectActivites($name){
+    try{
+        $select = "<select name='$name'>";
 
-    $select = "<select name='$name'>";
+        $tableau = getActivites();
 
-    $tableau = getActivites();
+        foreach ($tableau as $activites){
+            $select .= "<option value=$activites[idActivite]>$activites[nomActivite]</option>";
+        }
 
-    foreach ($tableau as $activites){
-        $select .= "<option value=$activites[idActivite]>$activites[nomActivite]</option>";
+        $select .= "</select>";
+
+        return $select;
+    }catch(Exception $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
     }
-
-    $select .= "</select>";
-
-    return $select;
+    
 }
 //afficher toutes les classes
 function afficherSelectClasses(){
-    $select = "<select name='classe'>";
+    try{
+        $select = "<select name='classe'>";
 
-    $tableau = getClasses();
+        $tableau = getClasses();
 
-    foreach($tableau as $classes){
-        $select .= "<option value=$classes[idClasse]>$classes[nomClasse]</option>";
+        foreach($tableau as $classes){
+            $select .= "<option value=$classes[idClasse]>$classes[nomClasse]</option>";
+        }
+    
+        $select .= "</select>";
+    
+        return $select;
     }
-    
-    $select .= "</select>";
-    
-    return $select;
+    catch(Exception $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    }
 }
 
 // avoir les differentes classes
@@ -49,7 +58,7 @@ function getActivites(){
     try{
         $query =  getConnexion()->prepare("
             SELECT `activite`.`idActivite`,`activite`.`nomActivite`
-            FROM `journeesportive`.`activite`
+            FROM `journeesportivee`.`activite`
         ");
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
