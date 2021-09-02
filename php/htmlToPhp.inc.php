@@ -91,17 +91,68 @@ function modifierActivite($nomActivite,$id){
     ");
     $query->execute([$nomActivite,$id]);
 }
+//effacer la classe choisi
+function deleteClasse($id){
+    
+    $pdo = getConnexion();
+    $query = $pdo->prepare("
+        DELETE FROM `incription` 
+        WHERE (SELECT `eleve`.`idClasse` FROM `eleve` WHERE `idClasse` = ?);
+    ");
+    $query->execute([$id]); 
+    
+    $query = $pdo->prepare("
+        DELETE FROM `eleve`
+        WHERE `eleve`.`idClasse` = ?
+    ");
+    $query->execute([$id]); 
+    
+    $query = $pdo->prepare("
+        DELETE FROM `classe`
+        WHERE `classe`.`idClasse` = ?
+    ");
+    $query->execute([$id]);    
+        
+}
+//effacer la activite choisi
+function deleteActivite($id){
+    try{
+        $pdo = getConnexion();
+            
+        $query = $pdo->prepare("
+            DELETE FROM `incription`
+            WHERE `incription`.`idActivite` = ?
+        ");
+        $query->execute([$id]); 
+            
+        $query = $pdo->prepare("
+            DELETE FROM `activite`
+            WHERE `activite`.`idActivite` = ?
+        ");
+        $query->execute([$id]);    
+    }catch(PDOException $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    }
+    
+        
+}
 
 // avoir les classes
 function getClasses(){
-    $query = getConnexion()->prepare("
-        SELECT `classe`.`idClasse`,`classe`.`nomClasse`
-        FROM `journeesportive`.`classe`
-    ");
-    $query->execute();
-    return $query->fetchAll(PDO::FETCH_ASSOC);
+    try{
+        $query = getConnexion()->prepare("
+            SELECT `classe`.`idClasse`,`classe`.`nomClasse`
+            FROM `journeesportive`.`classe`
+        ");
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+    catch(PDOException $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    }
+    
 }
-
+//montrer les classes et les activites
 function showAll($classes,$activites){
     
     $tableau = "<table>
@@ -120,7 +171,7 @@ function showAll($classes,$activites){
                 <td>$uneClasse[idClasse]</td>
                 <td>$uneClasse[nomClasse]</td>
                 <td><a href='./editer.php?id=$uneClasse[idClasse]&act=false'>Editer</a></td>
-                <td><a href='./editer.php?id=$uneClasse[idClasse]&act=false'>Effacer</a></td>
+                <td><a href='./effacer.php?id=$uneClasse[idClasse]&act=false'>Effacer</a></td>
             </tr>
         ";
     }
@@ -140,7 +191,7 @@ function showAll($classes,$activites){
             <td>$uneActivite[idActivite]</td>
             <td>$uneActivite[nomActivite]</td>
             <td><a href='./editer.php?id=$uneActivite[idActivite]&act=true'>Editer</a></td>
-            <td><a href='./editer.php?id=$uneActivite[idActivite]&act=true'>Effacer</a></td>
+            <td><a href='./effacer.php?id=$uneActivite[idActivite]&act=true'>Effacer</a></td>
         </tr>
     ";
 }
@@ -152,54 +203,69 @@ function showAll($classes,$activites){
 
 //ajouter une classe dans la base de donnees
 function insertClasse($nomClasse){
-    $pdo = getConnexion();
-    $query = $pdo->prepare("
-        INSERT INTO `journeesportive`.`classe`
-                    (`nomClasse`)
-        Values            (?)
-    ");
-    $query->execute([$nomClasse]);
+    try{
+        $pdo = getConnexion();
+        $query = $pdo->prepare("
+            INSERT INTO `journeesportive`.`classe`
+                       (`nomClasse`)
+            Values            (?)
+        ");
+        $query->execute([$nomClasse]);
+    }
+    catch(PDOException $e){
+       echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    }
 }
 
 //ajouter une activite a la base de donnees
 function insertActivite($nomActivite){
-    $pdo = getConnexion();
-    $query = $pdo->prepare("
-        INSERT INTO `journeesportive`.`activite`
+    try{
+        $pdo = getConnexion();
+        $query = $pdo->prepare("
+            INSERT INTO `journeesportive`.`activite`
                     (`nomActivite`)
-        Values          (?)
-    ");
-    $query->execute([$nomActivite]);
-}
-
-function insertEleve($nomEleve, $prenomEleve, $idClasse, $choix1, $choix2, $choix3){
-    $pdo = getConnexion();
-    $query = $pdo->prepare("
-        INSERT INTO  `journeesportive`.`eleve`
-                    (`nom`,`prenom`,`idClasse`)
-        Values      (?,?,?)
-    ");
-    $query->execute([$nomEleve,$prenomEleve,$idClasse]);
-
-    $last_id = $pdo->lastInsertId();
-    
-    $query = $pdo->prepare("
-        INSERT INTO `journeesportive`.`incription`
-                    (`idEleve`,`idActivite`,`ordrePref`)
-        Values            (?,?,?)
-    ");
-    for($i = 0; $i<3; $i++){
-        
-        if($i == 0){
-            $query->execute([$last_id, $choix1,1]);
-        }
-        else if($i == 1){
-            $query->execute([$last_id, $choix2,2]);
-        }
-        else{
-            $query->execute([$last_id, $choix3,3]);
-        }
-
+            Values          (?)
+        ");
+        $query->execute([$nomActivite]);
     }
-   
+    catch(PDOException $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    }
+}
+//ajouter un eleve avec les choix quil a choisi
+function insertEleve($nomEleve, $prenomEleve, $idClasse, $choix1, $choix2, $choix3){
+
+    try{
+        $pdo = getConnexion();
+        $query = $pdo->prepare("
+            INSERT INTO  `journeesportive`.`eleve`
+                        (`nom`,`prenom`,`idClasse`)
+            Values      (?,?,?)
+        ");
+        $query->execute([$nomEleve,$prenomEleve,$idClasse]);
+    
+        $last_id = $pdo->lastInsertId();
+        
+        $query = $pdo->prepare("
+            INSERT INTO `journeesportive`.`incription`
+                        (`idEleve`,`idActivite`,`ordrePref`)
+            Values            (?,?,?)
+        ");
+        for($i = 0; $i<3; $i++){
+            
+            if($i == 0){
+                $query->execute([$last_id, $choix1,1]);
+            }
+            else if($i == 1){
+                $query->execute([$last_id, $choix2,2]);
+            }
+            else{
+                $query->execute([$last_id, $choix3,3]);
+            }
+    
+        }
+    }
+    catch(PDOException $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    }
 }

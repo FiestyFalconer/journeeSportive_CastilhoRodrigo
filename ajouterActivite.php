@@ -3,28 +3,29 @@ require_once './php/htmlToPhp.inc.php';
 
 $submit = filter_input(INPUT_POST, 'submit', FILTER_SANITIZE_STRING);
 $message = "";
-$boolActivite = true;
+$boolActivite = false;
 
 if ($submit == "submit") {
     $nomActivite = filter_input(INPUT_POST, 'nouvelleActivite', FILTER_SANITIZE_STRING);
-    var_dump($nomActivite);
     if ($nomActivite != "") {
-        echo "ddddd";
         $tableau = getActivites();
         //voir si on a deja la meme classe dans la base de donnees
         foreach ($tableau as $activite) {
             if ($activite['nomActivite'] == $nomActivite) {
-                $boolClasse = false;
+                $boolActivite = true;
             }
         }
-        if ($boolActivite) {
-            $message = "IL existe deja cette activite";
-        } else {
-            $message = "la activite a bien etais ajoutée";
-            insertActivite($nomActivite);
-        }
+        
     } else {
         $message = "ERREUR";
+    }
+
+    if ($boolActivite) {
+        $message = "IL existe deja cette activite";
+    } else {
+        
+        $message = "la activite a bien etais ajoutée";
+        insertActivite($nomActivite);
     }
 }
 ?>

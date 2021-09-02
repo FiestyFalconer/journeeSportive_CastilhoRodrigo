@@ -37,8 +37,6 @@ if($submit == "submit"){
 else if($submit == "annuler"){
     $_SESSION = [];
 }
-//var_dump(getActivites());
-var_dump($_SESSION);
 ?>
 <!DOCTYPE html>
 <html lang="en">
