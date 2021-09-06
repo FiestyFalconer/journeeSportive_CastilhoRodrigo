@@ -2,6 +2,7 @@
 require_once './php/htmlToPhp.inc.php';
 
 $submit = filter_input(INPUT_POST,'submits',FILTER_SANITIZE_STRING);
+$connecte = "Le utilisateur n'est pas connecté";
 $message = "";
 
 if($submit == "submit"){
@@ -32,11 +33,14 @@ if($submit == "submit"){
             insertEleve($_SESSION['Nom'], $_SESSION['Prenom'], $_SESSION['Classe'], $choix1, $choix2, $choix3);
         }
     }
-    
 }
-else if($submit == "annuler"){
-    $_SESSION = [];
+
+if($_SESSION['Login']){
+    $connecte = "Vous êtes connecté en train de Admin";
+
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,6 +54,7 @@ else if($submit == "annuler"){
 
 <body>
     <h1>Inscription à la journée sportive du CFPT</h1>
+    <h2><?=$connecte?></h2>
     <form action="inscription.php" method="POST">
 
         <div>
@@ -91,13 +96,17 @@ else if($submit == "annuler"){
 
     </form>
     <p style="color: red;"><?=$message?></p>
+    
     <div>
+        <?php if($_SESSION['Login']){?>
         <a href="./ajouterClasse.php">Ajouter une classe</a>
         <br>
         <a href="./ajouterActivite.php">Ajouter une activité</a>
         <br>
+        <?php }?>
         <a href="./index.php">Retour</a>
     </div>
+    
 </body>
 
 </html>

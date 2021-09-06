@@ -11,6 +11,7 @@ if(!isset($_SESSION['Nom'])){
         'Choix1' => '',
         'Choix2' => '',
         'Choix3' => '', 
+        'Login' => false
     ];
 }
 
@@ -287,6 +288,21 @@ function getEleves_id($pdo, $prenomEleve, $nomEleve){
     return false;
 }
 
+function login($utilisateur, $password){
+
+    $hashPassword = sha1($password);
+
+    $pdo = getConnexion();
+    $query = $pdo->prepare("
+        SELECT `utilisateurs`.`pseudo`, `utilisateurs`.`password`
+        FROM `journeesportive`.`utilisateurs`
+        WHERE `utilisateurs`.`pseudo` = ?
+        AND `utilisateurs`.`password` = ?
+    ");
+    $query->execute([$utilisateur,$hashPassword]);
+    return $query->fetch(PDO::FETCH_ASSOC);
+}
+
 
 //ajouter un eleve avec les choix quil a choisi
 function insertEleve( $nomEleve, $prenomEleve, $idClasse, $choix1, $choix2, $choix3){
@@ -309,7 +325,7 @@ function insertEleve( $nomEleve, $prenomEleve, $idClasse, $choix1, $choix2, $cho
             $query->execute([$nomEleve,$prenomEleve,$idClasse]);
     
             $last_id = $pdo->lastInsertId();
-            var_dump($last_id);
+            
             $query = $pdo->prepare("
                 INSERT INTO `journeesportive`.`incription`
                         (`idEleve`,`idActivite`,`ordrePref`)

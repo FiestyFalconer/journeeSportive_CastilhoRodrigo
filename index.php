@@ -1,6 +1,10 @@
 <?php
 require_once "./php/htmlToPhp.inc.php";
+$connecte = "Le utilisateur n'est pas connecté";
 
+if($_SESSION['Login']){
+    $connecte = "Vous êtes connecté en train de Admin";
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,10 +16,15 @@ require_once "./php/htmlToPhp.inc.php";
 </head>
 <body>
     <h1>Journee Sportive CFPT</h1>
-
+    <h2><?=$connecte?></h2>
     <?= showAll(getClasses(),getActivites())?>
 
 
     <a href="./inscription.php">Inscription</a>
+    <?php if($_SESSION['Login']){?>
+    <a href="./deconnexion.php">Déconnexion</a>
+    <?php }else{?>
+    <a href="./login.php">Login</a>
+    <?php }?>
 </body>
 </html>
