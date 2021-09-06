@@ -21,7 +21,6 @@ if($submit == "submit"){
         }
     }
 }
-var_dump($_SESSION['Login']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,5 +42,6 @@ var_dump($_SESSION['Login']);
         <br>
         <button type="submit" name="envoyer" value="submit">Envoyer</button>
     </form>
+    <a href="index.php">Page d'index</a>
 </body>
 </html>

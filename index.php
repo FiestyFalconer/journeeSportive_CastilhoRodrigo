@@ -20,8 +20,9 @@ if($_SESSION['Login']){
     <?= showAll(getClasses(),getActivites())?>
 
 
-    <a href="./inscription.php">Inscription</a>
+    
     <?php if($_SESSION['Login']){?>
+    <a href="./inscription.php">Inscription</a>
     <a href="./deconnexion.php">Déconnexion</a>
     <?php }else{?>
     <a href="./login.php">Login</a>

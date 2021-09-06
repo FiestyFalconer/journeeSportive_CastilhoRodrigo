@@ -5,6 +5,10 @@ $submit = filter_input(INPUT_POST,'submits',FILTER_SANITIZE_STRING);
 $connecte = "Le utilisateur n'est pas connecté";
 $message = "";
 
+if(!$_SESSION['Login']){
+    header('Location: login.php');
+}
+
 if($submit == "submit"){
     //variables pour stocker les donnees
     $nom = filter_input(INPUT_POST,'nomEleve',FILTER_SANITIZE_STRING);

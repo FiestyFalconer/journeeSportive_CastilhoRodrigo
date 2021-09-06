@@ -203,14 +203,24 @@ function showAll($classes,$activites){
     ";
 
     foreach($classes as $uneClasse){
-        $tableau.="
+        if($_SESSION['Login']){
+            $tableau.="
             <tr>
                 <td>$uneClasse[idClasse]</td>
                 <td>$uneClasse[nomClasse]</td>
                 <td><a href='./editer.php?id=$uneClasse[idClasse]&act=false'>Editer</a></td>
                 <td><a href='./effacer.php?id=$uneClasse[idClasse]&act=false'>Effacer</a></td>
             </tr>
-        ";
+            ";
+        }
+        else{
+            $tableau.="
+                <tr>
+                <td>$uneClasse[idClasse]</td>
+                <td>$uneClasse[nomClasse]</td>
+                </tr>
+             ";
+        }
     }
     $tableau .= "<table>
     <thead>
@@ -223,15 +233,24 @@ function showAll($classes,$activites){
     ";
 
     foreach($activites as $uneActivite){
-    $tableau.="
-        <tr>
-            <td>$uneActivite[idActivite]</td>
-            <td>$uneActivite[nomActivite]</td>
-            <td><a href='./editer.php?id=$uneActivite[idActivite]&act=true'>Editer</a></td>
-            <td><a href='./effacer.php?id=$uneActivite[idActivite]&act=true'>Effacer</a></td>
-        </tr>
-    ";
-}
+        if($_SESSION['Login']){
+            $tableau.="
+                <tr>
+                    <td>$uneActivite[idActivite]</td>
+                    <td>$uneActivite[nomActivite]</td>
+                    <td><a href='./editer.php?id=$uneActivite[idActivite]&act=true'>Editer</a></td>
+                    <td><a href='./effacer.php?id=$uneActivite[idActivite]&act=true'>Effacer</a></td>
+                </tr>
+            ";
+        }else{
+            $tableau.="
+                <tr>
+                    <td>$uneActivite[idActivite]</td>
+                    <td>$uneActivite[nomActivite]</td>
+                </tr>
+            ";
+        }
+    }
     $tableau.="</tbody></table>";
 
     return $tableau;
@@ -325,7 +344,7 @@ function insertEleve( $nomEleve, $prenomEleve, $idClasse, $choix1, $choix2, $cho
             $query->execute([$nomEleve,$prenomEleve,$idClasse]);
     
             $last_id = $pdo->lastInsertId();
-            
+
             $query = $pdo->prepare("
                 INSERT INTO `journeesportive`.`incription`
                         (`idEleve`,`idActivite`,`ordrePref`)
