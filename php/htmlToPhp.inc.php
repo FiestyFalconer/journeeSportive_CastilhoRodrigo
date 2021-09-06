@@ -268,40 +268,72 @@ function insertActivite($nomActivite){
         echo 'Exception reçue : ',  $e->getMessage(), "\n";
     }
 }
+//avoir les eleves de la table
+function getEleves_id($pdo, $prenomEleve, $nomEleve){
+    $pdo = getConnexion();
+    $query = $pdo->prepare("
+        SELECT `eleve`.`idEleve` 
+        FROM `journeesportive`.`eleve`
+        WHERE `eleve`.`nom` = ?
+        AND `eleve`.`prenom` = ?
+    ");
+
+    if($query->execute([$nomEleve, $prenomEleve])){
+        $row = $query->fetch(PDO::FETCH_ASSOC);
+
+        return $row !== false ? $row['idEleve'] : false;
+    }
+
+    return false;
+}
+
+
 //ajouter un eleve avec les choix quil a choisi
-function insertEleve($nomEleve, $prenomEleve, $idClasse, $choix1, $choix2, $choix3){
+function insertEleve( $nomEleve, $prenomEleve, $idClasse, $choix1, $choix2, $choix3){
 
     try{
         $pdo = getConnexion();
-        $query = $pdo->prepare("
-            INSERT INTO  `journeesportive`.`eleve`
+        $pdo->beginTransaction();
+
+        $eleve_id = getEleves_id($pdo, $prenomEleve, $nomEleve);
+
+        var_dump($eleve_id);
+
+        if($eleve_id == false){
+
+            $query = $pdo->prepare("
+                INSERT INTO  `journeesportive`.`eleve`
                         (`nom`,`prenom`,`idClasse`)
-            Values      (?,?,?)
-        ");
-        $query->execute([$nomEleve,$prenomEleve,$idClasse]);
+                Values      (?,?,?)
+            ");
+            $query->execute([$nomEleve,$prenomEleve,$idClasse]);
     
-        $last_id = $pdo->lastInsertId();
-        
-        $query = $pdo->prepare("
-            INSERT INTO `journeesportive`.`incription`
+            $last_id = $pdo->lastInsertId();
+            var_dump($last_id);
+            $query = $pdo->prepare("
+                INSERT INTO `journeesportive`.`incription`
                         (`idEleve`,`idActivite`,`ordrePref`)
-            Values            (?,?,?)
-        ");
-        for($i = 0; $i<3; $i++){
+                Values            (?,?,?)
+            ");
+            for($i = 0; $i<3; $i++){
             
-            if($i == 0){
-                $query->execute([$last_id, $choix1,1]);
+                if($i == 0){
+                    $query->execute([$last_id, $choix1,1]);
+                }
+                else if($i == 1){
+                    $query->execute([$last_id, $choix2,2]);
+                }
+                else{
+                   $query->execute([$last_id, $choix3,3]);
+                }
             }
-            else if($i == 1){
-                $query->execute([$last_id, $choix2,2]);
-            }
-            else{
-                $query->execute([$last_id, $choix3,3]);
-            }
-    
+
+            $pdo->commit();
         }
     }
     catch(PDOException $e){
+        $pdo->rollBack();
+
         echo 'Exception reçue : ',  $e->getMessage(), "\n";
     }
 }

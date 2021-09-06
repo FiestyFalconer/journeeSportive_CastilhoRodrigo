@@ -1,7 +1,7 @@
 <?php
 require_once './php/htmlToPhp.inc.php';
 
-$submit = filter_input(INPUT_POST,'submit',FILTER_SANITIZE_STRING);
+$submit = filter_input(INPUT_POST,'submits',FILTER_SANITIZE_STRING);
 $message = "";
 
 if($submit == "submit"){
@@ -86,8 +86,8 @@ else if($submit == "annuler"){
             <?=afficherSelectActivites('choix3')?>
         </div>
 
-        <button type="submit" name="submit" value="submit">Confirmer</button>
-        <button type="submit" name="submit" value="annuler">Annuler</button>
+        <button type="submit" name="submits" value="submit">Confirmer</button>
+        <button type="submit" name="submits" value="annuler">Annuler</button>
 
     </form>
     <p style="color: red;"><?=$message?></p>
