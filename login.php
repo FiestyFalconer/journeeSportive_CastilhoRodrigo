@@ -2,22 +2,18 @@
 require_once "./php/htmlToPhp.inc.php";
 
 $submit = filter_input(INPUT_POST,'envoyer',FILTER_SANITIZE_STRING);
-
+//voir si on a bien cliquer sur le bouton submit
 if($submit == "submit"){
+    //recuperation des donnees
     $password = filter_input(INPUT_POST,'password',FILTER_SANITIZE_STRING);
     $utilisateur = filter_input(INPUT_POST,'utilisateur',FILTER_SANITIZE_STRING);
-
+    //voir si les variables sont vides
     if($password != "" && $utilisateur != ""){
-
-        var_dump($password);
-        var_dump($utilisateur);
-
-        var_dump(login($utilisateur,$password));
-        
+        //voir si le nom et le mot de passe sont bon
         if(login($utilisateur,$password)){
-            echo "HELLO";
             $_SESSION['Login'] = true;
             header('location: index.php');
+            exit();
         }
     }
 }

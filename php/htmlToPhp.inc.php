@@ -307,19 +307,33 @@ function getEleves_id($pdo, $prenomEleve, $nomEleve){
     return false;
 }
 
-function login($utilisateur, $password){
-
-    $hashPassword = sha1($password);
-
+function getPassword($utilisateur){
+    try{
     $pdo = getConnexion();
     $query = $pdo->prepare("
-        SELECT `utilisateurs`.`pseudo`, `utilisateurs`.`password`
+        SELECT  `utilisateurs`.`password`
         FROM `journeesportive`.`utilisateurs`
         WHERE `utilisateurs`.`pseudo` = ?
-        AND `utilisateurs`.`password` = ?
     ");
-    $query->execute([$utilisateur,$hashPassword]);
+    $query->execute([$utilisateur]);
     return $query->fetch(PDO::FETCH_ASSOC);
+    }
+    catch(PDOException $e){
+        echo 'Exception reçue : ',  $e->getMessage(), "\n";
+    }
+}
+
+function login($utilisateur, $password){
+    var_dump(getPassword($utilisateur));
+    var_dump($utilisateur);
+    if(getPassword($utilisateur)){
+        $hashPassword = password_verify($password,getPassword($utilisateur)['password']);
+
+        if($hashPassword){
+            return true;
+        }
+    }
+    return false;
 }
 
 
@@ -333,7 +347,7 @@ function insertEleve( $nomEleve, $prenomEleve, $idClasse, $choix1, $choix2, $cho
         $eleve_id = getEleves_id($pdo, $prenomEleve, $nomEleve);
 
         var_dump($eleve_id);
-
+        //si ele
         if($eleve_id == false){
 
             $query = $pdo->prepare("
